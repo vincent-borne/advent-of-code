@@ -1,0 +1,12 @@
+{
+  "name": "adventcalendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "9/index.js",
+  "scripts": {
+    "start": "nodemon main",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
