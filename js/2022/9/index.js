@@ -78,10 +78,10 @@ async function b() {
     .split("\n");
 
   let result = {};
-  const ropes = [];
+  const rope = [];
 
   for (let i = 0; i < 10; i++) {
-    ropes.push({ x: 1, y: 1 });
+    rope.push({ x: 1, y: 1 });
   }
 
   for (const item of input) {
@@ -91,47 +91,47 @@ async function b() {
 
     for (let i = 0; i < times; i++) {
       if (direction === "R") {
-        ropes[0].x++;
+        rope[0].x++;
       } else if (direction === "L") {
-        ropes[0].x--;
+        rope[0].x--;
       } else if (direction === "U") {
-        ropes[0].y++;
+        rope[0].y++;
       } else if (direction === "D") {
-        ropes[0].y--;
+        rope[0].y--;
       }
 
-      result[`${ropes[ropes.length - 1].x}_${ropes[ropes.length - 1].y}`] = {};
+      result[`${rope[rope.length - 1].x}_${rope[rope.length - 1].y}`] = {};
 
-      for (let i = 1; i < ropes.length; i++) {
+      for (let i = 1; i < rope.length; i++) {
         if (
-          Math.abs(ropes[i - 1].x - ropes[i].x) < 2 &&
-          Math.abs(ropes[i - 1].y - ropes[i].y) < 2
+          Math.abs(rope[i - 1].x - rope[i].x) < 2 &&
+          Math.abs(rope[i - 1].y - rope[i].y) < 2
         ) {
           continue;
         }
 
-        if (ropes[i - 1].y === ropes[i].y) {
-          if (ropes[i - 1].x > ropes[i].x) {
-            ropes[i].x++;
+        if (rope[i - 1].y === rope[i].y) {
+          if (rope[i - 1].x > rope[i].x) {
+            rope[i].x++;
           } else {
-            ropes[i].x--;
+            rope[i].x--;
           }
-        } else if (ropes[i - 1].x === ropes[i].x) {
-          if (ropes[i - 1].y > ropes[i].y) {
-            ropes[i].y++;
+        } else if (rope[i - 1].x === rope[i].x) {
+          if (rope[i - 1].y > rope[i].y) {
+            rope[i].y++;
           } else {
-            ropes[i].y--;
+            rope[i].y--;
           }
         } else {
-          if (ropes[i - 1].x > ropes[i].x) {
-            ropes[i].x++;
+          if (rope[i - 1].x > rope[i].x) {
+            rope[i].x++;
           } else {
-            ropes[i].x--;
+            rope[i].x--;
           }
-          if (ropes[i - 1].y > ropes[i].y) {
-            ropes[i].y++;
+          if (rope[i - 1].y > rope[i].y) {
+            rope[i].y++;
           } else {
-            ropes[i].y--;
+            rope[i].y--;
           }
         }
       }
