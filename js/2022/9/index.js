@@ -1,13 +1,41 @@
 const fs = require("fs").promises;
 
+function moveHead(direction, head) {
+  if (direction === "R") {
+    head.x++;
+  } else if (direction === "L") {
+    head.x--;
+  } else if (direction === "U") {
+    head.y++;
+  } else if (direction === "D") {
+    head.y--;
+  }
+}
+
+function follow(head, tail) {
+  if (Math.abs(tail.x - head.x) < 2 && Math.abs(tail.y - head.y) < 2) {
+    return;
+  }
+
+  const newX = (tail.x + head.x) / 2;
+  const newY = (tail.y + head.y) / 2;
+
+  const isFloat = (n) => {
+    return n % 1 !== 0;
+  };
+
+  tail.x = isFloat(newX) ? head.x : newX;
+  tail.y = isFloat(newY) ? head.y : newY;
+}
+
 async function a() {
   let input = (await fs.readFile(`${__dirname}/input.txt`))
     .toString()
     .split("\n");
 
-  let result = {};
-  let hPos = { x: 1, y: 1 };
-  let tPos = { x: 1, y: 1 };
+  const result = new Set();
+  let head = { x: 1, y: 1 };
+  let tail = { x: 1, y: 1 };
 
   for (const item of input) {
     const split = item.split(" ");
@@ -15,61 +43,15 @@ async function a() {
     const times = Number(split[1]);
 
     for (let i = 0; i < times; i++) {
-      result[`${tPos.x}_${tPos.y}`] = {};
-
-      if (direction === "R") {
-        hPos.x++;
-
-        if (tPos.x + 1 === hPos.x - 1 && tPos.y === hPos.y) {
-          tPos.x++;
-        } else if (tPos.x + 1 === hPos.x - 1 && tPos.y + 1 === hPos.y) {
-          tPos.x++;
-          tPos.y++;
-        } else if (tPos.x + 1 === hPos.x - 1 && tPos.y - 1 === hPos.y) {
-          tPos.x++;
-          tPos.y--;
-        }
-      } else if (direction === "L") {
-        hPos.x--;
-
-        if (tPos.x - 1 === hPos.x + 1 && tPos.y === hPos.y) {
-          tPos.x--;
-        } else if (tPos.x - 1 === hPos.x + 1 && tPos.y + 1 === hPos.y) {
-          tPos.x--;
-          tPos.y++;
-        } else if (tPos.x - 1 === hPos.x + 1 && tPos.y - 1 === hPos.y) {
-          tPos.x--;
-          tPos.y--;
-        }
-      } else if (direction === "U") {
-        hPos.y++;
-
-        if (tPos.x + 1 === hPos.x && tPos.y + 1 === hPos.y - 1) {
-          tPos.x++;
-          tPos.y++;
-        } else if (tPos.x - 1 === hPos.x && tPos.y + 1 === hPos.y - 1) {
-          tPos.x--;
-          tPos.y++;
-        } else if (tPos.x === hPos.x && tPos.y + 1 === hPos.y - 1) {
-          tPos.y++;
-        }
-      } else if (direction === "D") {
-        hPos.y--;
-
-        if (tPos.x + 1 === hPos.x && tPos.y - 1 === hPos.y + 1) {
-          tPos.x++;
-          tPos.y--;
-        } else if (tPos.x - 1 === hPos.x && tPos.y - 1 === hPos.y + 1) {
-          tPos.x--;
-          tPos.y--;
-        } else if (tPos.x === hPos.x && tPos.y - 1 === hPos.y + 1) {
-          tPos.y--;
-        }
-      }
+      result.add(`${tail.x},${tail.y}`);
+      moveHead(direction, head);
+      follow(head, tail);
     }
+
+    result.add(`${tail.x},${tail.y}`);
   }
 
-  console.log(Object.entries(result).length + 1);
+  console.log(result.size);
 }
 
 async function b() {
@@ -77,68 +59,31 @@ async function b() {
     .toString()
     .split("\n");
 
-  let result = {};
-  const rope = [];
-
-  for (let i = 0; i < 10; i++) {
-    rope.push({ x: 1, y: 1 });
-  }
+  const result = new Set();
+  const ropeSize = 10;
+  const rope = new Array(ropeSize).fill(0).map((_) => ({ x: 1, y: 1 }));
+  const head = rope[0];
+  const tail = rope[rope.length - 1];
 
   for (const item of input) {
     const split = item.split(" ");
     const direction = split[0];
-    let times = Number(split[1]);
+    const times = Number(split[1]);
 
     for (let i = 0; i < times; i++) {
-      if (direction === "R") {
-        rope[0].x++;
-      } else if (direction === "L") {
-        rope[0].x--;
-      } else if (direction === "U") {
-        rope[0].y++;
-      } else if (direction === "D") {
-        rope[0].y--;
-      }
+      moveHead(direction, head);
 
-      result[`${rope[rope.length - 1].x}_${rope[rope.length - 1].y}`] = {};
-
-      for (let i = 1; i < rope.length; i++) {
-        if (
-          Math.abs(rope[i - 1].x - rope[i].x) < 2 &&
-          Math.abs(rope[i - 1].y - rope[i].y) < 2
-        ) {
-          continue;
-        }
-
-        if (rope[i - 1].y === rope[i].y) {
-          if (rope[i - 1].x > rope[i].x) {
-            rope[i].x++;
-          } else {
-            rope[i].x--;
-          }
-        } else if (rope[i - 1].x === rope[i].x) {
-          if (rope[i - 1].y > rope[i].y) {
-            rope[i].y++;
-          } else {
-            rope[i].y--;
-          }
-        } else {
-          if (rope[i - 1].x > rope[i].x) {
-            rope[i].x++;
-          } else {
-            rope[i].x--;
-          }
-          if (rope[i - 1].y > rope[i].y) {
-            rope[i].y++;
-          } else {
-            rope[i].y--;
-          }
-        }
+      for (let j = 0; j < rope.length; j++) {
+        result.add(`${tail.x},${tail.y}`);
+        if (j + 1 === rope.length) continue;
+        follow(rope[j], rope[j + 1]);
       }
     }
+
+    result.add(`${tail.x},${tail.y}`);
   }
 
-  console.log(Object.entries(result).length + 1);
+  console.log(result.size);
 }
 
 async function main() {
