@@ -54,11 +54,11 @@ async function b() {
   for (const item of input) {
     const split = item.split(" ");
     ++tick;
-    renderSprite(sprite, spritePosition(X), tick);
+    renderSprite(sprite, tick, X);
 
     if (split[0] === "addx") {
       ++tick;
-      renderSprite(sprite, spritePosition(X), tick);
+      renderSprite(sprite, tick, X);
 
       const toAdd = Number(split[1]);
       if (!Number.isNaN(toAdd)) {
@@ -78,28 +78,23 @@ async function b() {
   }
 }
 
-function renderSprite(sprite, spritePosition, tick) {
-  ++sprite.x;
+function renderSprite(sprite, tick, X) {
+  let pixel = ".";
+  if (sprite.x <= X + 1 && sprite.x >= X - 1) {
+    pixel = "#";
+  }
 
   if (!sprite.grid[sprite.y]) {
     sprite.grid[sprite.y] = [];
   }
 
-  sprite.grid[sprite.y].push(spritePosition[sprite.x]);
+  sprite.grid[sprite.y].push(pixel);
+  ++sprite.x;
 
   if (tick % 40 === 0) {
     ++sprite.y;
     sprite.x = 0;
   }
-}
-
-function spritePosition(pos) {
-  const arr = new Array(41).fill(0).map((_) => ".");
-  arr[pos] = "#";
-  arr[pos + 1] = "#";
-  arr[pos + 2] = "#";
-
-  return arr;
 }
 
 async function main() {
