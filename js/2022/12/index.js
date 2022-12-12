@@ -1,12 +1,5 @@
 const fs = require("fs").promises;
 
-const directions = [
-  [0, 1],
-  [1, 0],
-  [0, -1],
-  [-1, 0],
-];
-
 async function a() {
   let input = (await fs.readFile(`${__dirname}/input.txt`))
     .toString()
@@ -33,14 +26,6 @@ async function a() {
   }
 
   console.log(search(grid, start, end));
-}
-
-function getHashKey(x, y) {
-  return `${x},${y}`;
-}
-
-function getValue(letter) {
-  return letter.charCodeAt(0) % 97;
 }
 
 async function b() {
@@ -79,6 +64,12 @@ async function b() {
 }
 
 function search(grid, start, end) {
+  const directions = [
+    [0, 1],
+    [1, 0],
+    [0, -1],
+    [-1, 0],
+  ];
   const visited = new Set();
   const stack = [{ position: start, depth: 0 }];
 
@@ -122,6 +113,14 @@ function search(grid, start, end) {
 
     visited.add(hashKey);
   }
+}
+
+function getHashKey(x, y) {
+  return `${x},${y}`;
+}
+
+function getValue(letter) {
+  return letter.charCodeAt(0) % 97;
 }
 
 async function main() {
