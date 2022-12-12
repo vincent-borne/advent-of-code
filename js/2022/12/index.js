@@ -71,10 +71,10 @@ function search(grid, start, end) {
     [-1, 0],
   ];
   const visited = new Set();
-  const stack = [{ position: start, depth: 0 }];
+  const queue = [{ position: start, depth: 0 }];
 
-  while (stack.length > 0) {
-    const item = stack.shift();
+  while (queue.length > 0) {
+    const item = queue.shift();
     const [x, y] = item.position;
     const depth = item.depth;
 
@@ -108,7 +108,7 @@ function search(grid, start, end) {
       }
 
       // Go through the next possible node
-      stack.push({ position: [x + dx, y + dy], depth: depth + 1 });
+      queue.push({ position: [x + dx, y + dy], depth: depth + 1 });
     }
 
     visited.add(hashKey);
