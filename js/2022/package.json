@@ -2,7 +2,7 @@
   "name": "adventcalendar",
   "version": "1.0.0",
   "description": "",
-  "main": "13/index.js",
+  "main": "14/index.js",
   "scripts": {
     "start": "nodemon main",
     "test": "echo \"Error: no test specified\" && exit 1"
