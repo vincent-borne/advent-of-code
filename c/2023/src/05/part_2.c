@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INPUT "./src/05/test_input.txt"
+#define INPUT "./src/05/input.txt"
 
 void split(char* str, char* delim, char** result, int* result_size) {
     *result_size = -1;
@@ -25,6 +25,31 @@ void print_int_array(long long* arr, int size) {
     }
 }
 
+long long get_location(long long seed, int maps_size, int maps_arr_size[7], long long maps[7][100][3]) {
+    long long location = seed;
+    // printf("Seed = %i\n", seed);
+
+    for (int i = 0; i < maps_size; i++) {
+        // printf("\tMap %d\n", i);
+        for (int j = 0; j < maps_arr_size[i]; j++) {
+            long long destination = maps[i][j][0];
+            long long source = maps[i][j][1];
+            long long length = maps[i][j][2];
+            // printf("\t\tMap[%d][%d] = %lld %lld %lld\n", i, j, destination, source, length);
+
+            if (location >= source && location < (source + length)) {
+                long long r = location - source;
+                long long rr = destination + r;
+                location = rr;
+                // printf("\t\tNew seed map[%d][%d] = %d\n", i, j, location);
+                break;
+            }
+        }
+    }
+
+    return location;
+}
+
 int main(void) {
     printf("Input file: %s\n", INPUT);
 
@@ -40,10 +65,14 @@ int main(void) {
     ssize_t read;
 
     int seeds_size = 0;
-    long long seeds[100][2];
+    long long seeds[100];
 
-    int interval_size = 0;
-    long long interval[100][3];
+    int maps_size = -1;
+    int maps_arr_size[7];
+    for (int i = 0; i < 7; i++) {
+        maps_arr_size[i] = 0;
+    }
+    long long maps[7][100][3];
 
     while ((read = getline(&line, &len, f)) != -1) {
         strtok(line, "\n");
@@ -61,9 +90,8 @@ int main(void) {
             char* split_seeds[20];
             split(split_types[1], " ", split_seeds, &split_seeds_size);
 
-            for (int i = 0; i < split_seeds_size - 1; i += 2) {
-                seeds[seeds_size][0] = atoll(split_seeds[i]);
-                seeds[seeds_size][1] = atoll(split_seeds[i + 1]);
+            for (int i = 0; i < split_seeds_size; i++) {
+                seeds[seeds_size] = atoll(split_seeds[i]);
                 seeds_size++;
             }
 
@@ -71,28 +99,7 @@ int main(void) {
         }
 
         if (strstr(line, "map") != NULL) {
-            for (int i = 0; i < seeds_size; i++) {
-                long long seed[2];
-                seed[0] = seeds[i][0];
-                seed[1] = seeds[i][1];
-
-                for (long long k = seed[0]; k < seed[1]; k++) {
-                    for (int j = 0; j < interval_size; j++) {
-                        long long destination = interval[j][0];
-                        long long source = interval[j][1];
-                        long long length = interval[j][2];
-
-                        if (k >= source && k < (source + length)) {
-                            long long r = k - source;
-                            long long rr = destination + r;
-                            seeds[i][0] = rr;
-                            seeds[i][1] = 1;
-                        }
-                    }
-                }
-            }
-
-            interval_size = 0;
+            ++maps_size;
         } else {
             int split_nb_size;
             char* split_nb[20];
@@ -106,22 +113,32 @@ int main(void) {
             long long source = atoll(split_nb[1]);
             long long length = atoll(split_nb[2]);
 
-            interval[interval_size][0] = destination;
-            interval[interval_size][1] = source;
-            interval[interval_size][2] = length;
-            interval_size++;
+            maps[maps_size][maps_arr_size[maps_size]][0] = destination;
+            maps[maps_size][maps_arr_size[maps_size]][1] = source;
+            maps[maps_size][maps_arr_size[maps_size]][2] = length;
+            ++maps_arr_size[maps_size];
         }
     }
 
     long long result = LLONG_MAX;
 
-    for (int i = 0; i < seeds_size; i++) {
-        if (seeds[i][0] < result) {
-            result = seeds[i][0];
+    for (int k = 0; k < seeds_size - 1; k += 2) {
+        long long seed = seeds[k];
+        long long range = seeds[k + 1];
+        printf("Seed = %lld ; Range = %lld\n", seed, range);
+
+        for (int x = 0; x < range; x++) {
+            long long c_seed = seed + x;
+            long long location = get_location(c_seed, maps_size, maps_arr_size, maps);
+
+            if (location < result) {
+                printf("New result: %lld\n", location);
+                result = location;
+            }
         }
     }
 
-    printf("\nPart 1: %lld\n", result);
+    printf("\nPart 2: %lld\n", result);
 
     fclose(f);
 
