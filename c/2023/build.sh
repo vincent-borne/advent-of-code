@@ -1,1 +1,1 @@
-make day=15 part=2 && ./build/debug/aoc
+make day=13 part=2 && ./build/debug/aoc
