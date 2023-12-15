@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INPUT "./src/13/input.txt"
+#define INPUT "./src/13/test_input.txt"
 
 void split(char* str, char* delim, char** result, int* result_size) {
     *result_size = -1;
