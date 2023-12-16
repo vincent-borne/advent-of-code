@@ -72,43 +72,20 @@ bool should_continue(char* line, int line_size, int arrangments[10], int arrangm
         }
     }
 
-    if (broken_count > 0) {
-        found_arrangments[found_arrangments_size] = broken_count;
-        found_arrangments_size++;
+    if (found_arrangments_size > arrangments_size) {
+        return false;
     }
 
     for (int i = 0; i < found_arrangments_size; i++) {
-        if (found_arrangments[i] > arrangments[i]) {
+        if (found_arrangments[i] != arrangments[i]) {
             return false;
         }
     }
 
-    int possible_arrangments_left = 0;
-    int unknown_count = 0;
-    int found_arrangments_size_no_break = 0;
-
-    for (int i = 1; i < line_size - 2; i += 2) {
-        if (line[i] == '#') {
-            broken_count++;
-        } else if (broken_count > 0) {
-            found_arrangments_size++;
-            broken_count = 0;
-        }
-
-        if (line[i] != '#') {
-            if (line[i] == '?' && line[i + 1] == '?' && line[i + 2] != '#') {
-                possible_arrangments_left++;
-            } else if (line[i] == '?' && line[i + 1] == '.') {
-                possible_arrangments_left++;
-            }
-        }
-    }
-
-    // printf("\n%s\n", line);
-    // printf("possible_arrangments_left: %d < %d\n", possible_arrangments_left + found_arrangments_size, arrangments_size - found_arrangments_size);
-    if (possible_arrangments_left + found_arrangments_size < arrangments_size - found_arrangments_size) {
-        return false;
-    }
+    // for (int i = 0; i < line_size - 1; i++) {
+    //     if (line[i]) {
+    //     }
+    // }
 
     return true;
 }
