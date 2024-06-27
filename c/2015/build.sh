@@ -1,0 +1,1 @@
+make day=02 part=2 && ./build/debug/aoc
